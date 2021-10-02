@@ -1,0 +1,26 @@
+{
+  "name": "media-utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^12.11.1",
+    "dotenv": "^8.2.0",
+    "tslint": "^6.1.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.2.2",
+    "ffprobe": "^1.1.2",
+    "ffprobe-static": "^3.0.0",
+    "file-type": "^16.5.3",
+    "piexifjs": "^1.0.6",
+    "winston": "^3.3.3"
+  }
+}
