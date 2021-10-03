@@ -13,8 +13,8 @@ const analysers = {
 }
 
 export async function analyseFiles(parentFolder, cachePath) {
-    const data = {};
-    const filenames = getFilenames(parentFolder);
+    const data = {}, filenames = getFilenames(parentFolder);
+    logger.info({ message: `Analysing ${filenames.length} files...`, label: 'analyseFiles' });
 
     for (const filename of filenames) {
         logger.info({ message: `Analysing file '${filename}'...`, label: 'analyseFiles' });

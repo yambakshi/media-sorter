@@ -78,8 +78,8 @@ export function GPSSort(exif, data) {
 function reorganizeFiles(data, parentFolder) {
     if (Array.isArray(data)) {
         for (const { file } of data) {
-            const pathArray = file.path.split('/');
-            const filename = pathArray[pathArray.length - 1];
+            const pathParts = file.path.split('/');
+            const filename = pathParts[pathParts.length - 1];
             const newPath = `${parentFolder}/${filename}`;
             renameFile(file.path, newPath);
         }
@@ -93,7 +93,7 @@ function reorganizeFiles(data, parentFolder) {
 }
 
 export function sortFiles(data, path) {
-    logger.info({ message: 'Sorting files', label: 'sortFiles' });
+    logger.info({ message: `Sorting files in '${path}'`, label: 'sortFiles' });
     reorganizeFiles(data, path);
     logger.info({ message: 'Successfully sorted files', label: 'sortFiles' });
 }

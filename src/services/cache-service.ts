@@ -3,7 +3,7 @@ import { logger } from '../../config/logger';
 
 
 export function load(path) {
-    logger.info({ message: 'Loading cache...', label: 'load' });
+    logger.info({ message: `Loading cache '${path}'...`, label: 'load' });
     const cache = JSON.parse(readFile(`caches/${path}`));
     logger.info({ message: cache ? 'Successfully loaded cache' : 'No cache was found', label: 'load' });
 
