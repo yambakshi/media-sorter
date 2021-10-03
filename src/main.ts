@@ -7,8 +7,8 @@ async function main() {
     try {
         createFolder('caches');
 
-        for (const { path, cache } of env.folders) {
-            const data = load(cache) || await analyseFiles(path, cache);
+        for (const path of env.folders) {
+            const data = load(path) || await analyseFiles(path);
             (data && Object.keys(data).length === 0) || sortFiles(data, path);
         }
     } catch (error) {

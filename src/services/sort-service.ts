@@ -1,13 +1,14 @@
-import { logger } from '../../config/logger';
+import { env } from '../../config';
 import { createFolder, renameFile } from './fs-service';
+import { logger } from '../../config/logger';
 
 
-const zipcodesRegexes = {
+const zipcodesRegexes: { [key: string]: RegExp[] } = {
     "Portugal": [/\d{4}(?:[-\s]\d{3})?/, /[A-Z0-9]{4}\+[A-Z0-9]{2}/],
     "Spain": [/\d{5}/, /[A-Z0-9]{4}\+[A-Z0-9]{2}/]
 }
 
-export function datetimeGPSSort(exif, data) {
+export function datetimeGPSSort(exif, data): void {
     logger.info({ message: 'Photo contains datetime and GPS data', label: 'datetimeGPSSort' });
 
     const date = exif.file.datetime.split(' ')[0].replace(/\:/g, '-');
@@ -38,7 +39,7 @@ export function datetimeGPSSort(exif, data) {
     }
 }
 
-export function datetimeSort(exif, data) {
+export function datetimeSort(exif, data): void {
     logger.info({ message: 'Photo contains only datetime data', label: 'datetimeSort' });
 
     const date = exif.file.datetime.split(' ')[0].replace(/\:/g, '-');
@@ -50,7 +51,7 @@ export function datetimeSort(exif, data) {
     data[date].push(exif);
 }
 
-export function GPSSort(exif, data) {
+export function GPSSort(exif, data): void {
     logger.info({ message: 'Photo contains only GPS data', label: 'GPSSort' });
 
     const [country, cityWithZip] = exif.gps.address.split(', ').reverse();
@@ -75,7 +76,7 @@ export function GPSSort(exif, data) {
     }
 }
 
-function reorganizeFiles(data, parentFolder) {
+function reorganizeFiles(data, parentFolder: string): void {
     if (Array.isArray(data)) {
         for (const { file } of data) {
             const pathParts = file.path.split('/');
@@ -92,8 +93,9 @@ function reorganizeFiles(data, parentFolder) {
     }
 }
 
-export function sortFiles(data, path) {
-    logger.info({ message: `Sorting files in '${path}'`, label: 'sortFiles' });
-    reorganizeFiles(data, path);
+export function sortFiles(data, path: string): void {
+    const absPath = `${env.galleryPath}/${path}`;
+    logger.info({ message: `Sorting files in '${absPath}'`, label: 'sortFiles' });
+    reorganizeFiles(data, absPath);
     logger.info({ message: 'Successfully sorted files', label: 'sortFiles' });
 }

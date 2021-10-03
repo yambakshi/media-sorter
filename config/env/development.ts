@@ -1,7 +1,7 @@
 export default {
     apiKey: process.env.API_KEY,
-    folders: [{
-        path: `${process.env.GALLERY_FOLDER}/Trips/2021-09 - Portugal & Spain Family Trip/Ema/Photos`,
-        cache: "ema-photos.json"
-    }],
+    galleryPath: process.env.GALLERY_PATH,
+    folders: [
+        'Events/2021-08-17 - Meir Banai Tribute Concert'
+    ],
 }

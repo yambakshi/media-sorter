@@ -3,9 +3,11 @@ import ffprobe from 'ffprobe';
 import ffprobeStatic from 'ffprobe-static';
 import { resolveAddress } from './gps-service';
 import { getBase64DataFromFile, getFileSize } from './fs-service';
+import { LatLng } from '@googlemaps/google-maps-services-js';
+import { DeviceData, FileData, GPSData, JPGMetadata, VideoMetadata } from '../models';
 
 
-function printExif(exif) {
+function printExif(exif): void {
     for (const ifd in exif) {
         if (ifd == 'thumbnail') {
             const thumbnailData = exif[ifd] === null ? "null" : exif[ifd];
@@ -19,7 +21,7 @@ function printExif(exif) {
     }
 }
 
-function calcCoordinates(exif) {
+function calcCoordinates(exif): number[] {
     const latitude = exif['GPS'][piexif.GPSIFD.GPSLatitude];
     const latitudeRef = exif['GPS'][piexif.GPSIFD.GPSLatitudeRef];
     const longitude = exif['GPS'][piexif.GPSIFD.GPSLongitude];
@@ -34,7 +36,7 @@ function calcCoordinates(exif) {
     return [decimalLatitude, decimalLongitude];
 }
 
-function getDeviceData(exif) {
+function getDeviceData(exif): DeviceData {
     if (!!exif['0th'] && Object.keys(exif['0th']).length === 0) {
         return;
     }
@@ -46,7 +48,7 @@ function getDeviceData(exif) {
     }
 }
 
-function getFileData(exif, path) {
+function getFileData(exif, path): FileData {
     return {
         path,
         datetime: exif['Exif'][piexif.ExifIFD.DateTimeOriginal],
@@ -58,29 +60,30 @@ function getFileData(exif, path) {
     }
 }
 
-async function getGPSData(exif) {
+async function getGPSData(exif): Promise<GPSData> {
     if (!!exif['GPS'] && Object.keys(exif['GPS']).length === 0) {
         return;
     }
 
     const latlng = calcCoordinates(exif);
-    const address = await resolveAddress(latlng);
+    const address = await resolveAddress(latlng as LatLng);
 
     return { latlng, address };
 }
 
-export async function getJPGMetadata(photoPath) {
-    const exif = piexif.load(getBase64DataFromFile(photoPath));
+export async function getJPGMetadata(path: string): Promise<JPGMetadata> {
+    const exif = piexif.load(getBase64DataFromFile(path));
     const device = getDeviceData(exif);
-    const file = getFileData(exif, photoPath);
+    const file = getFileData(exif, path);
     const gps = await getGPSData(exif);
 
     return { device, file, gps };
 }
 
-export async function getVideoMetadata(path) {
+export async function getVideoMetadata(path: string): Promise<VideoMetadata> {
     const metadata = await ffprobe(path, { path: ffprobeStatic.path });
     const datetime = metadata.streams[0].tags.creation_time;
     const file = { datetime, path };
+
     return { file };
 }
