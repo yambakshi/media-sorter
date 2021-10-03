@@ -1,4 +1,5 @@
 # Media Sorter
+Sorts the photos and/or videos in the provided folders by date and/or location.
 
 ## NodeJS
 Version 10.15.3
