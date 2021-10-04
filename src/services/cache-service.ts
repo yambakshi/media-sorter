@@ -6,13 +6,13 @@ export function load(path: string) {
     const cachePath = `caches/${path}/cache.json`;
 
     logger.info({ message: `Loading cache '${cachePath}'...`, label: 'load' });
-    const cache = JSON.parse(readFile(cachePath));
+    const cache = JSON.parse(readFile(cachePath) as string);
     logger.info({ message: cache ? 'Successfully loaded cache' : 'No cache was found', label: 'load' });
 
     return cache;
 }
 
-export function cache(path: string, data): void {
+export function cache(path: string, data: {}): void {
     const cacheFolder = `caches/${path}`;
     createFolder(cacheFolder, true);
 

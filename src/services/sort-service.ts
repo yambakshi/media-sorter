@@ -1,5 +1,6 @@
 import { env } from '../../config';
 import { createFolder, renameFile } from './fs-service';
+import { JPGMetadata } from '../models';
 import { logger } from '../../config/logger';
 
 
@@ -8,11 +9,17 @@ const zipcodesRegexes: { [key: string]: RegExp[] } = {
     "Spain": [/\d{5}/, /[A-Z0-9]{4}\+[A-Z0-9]{2}/]
 }
 
-export function datetimeGPSSort(exif, data): void {
+function removeZipcode(country: string, cityWithZip: string): string {
+    let city = cityWithZip;
+    zipcodesRegexes[country].forEach(regex => city = city.replace(regex, ''));
+    return city.trim();
+}
+
+export function sortDatetimeGPS(metadata: JPGMetadata, data: {}): void {
     logger.info({ message: 'Photo contains datetime and GPS data', label: 'datetimeGPSSort' });
 
-    const date = exif.file.datetime.split(' ')[0].replace(/\:/g, '-');
-    const [country, cityWithZip] = exif.gps.address.split(', ').reverse();
+    const date = metadata.file.datetime.split(' ')[0].replace(/\:/g, '-');
+    const [country, cityWithZip] = metadata.gps.address.split(', ').reverse();
 
     if (!data[date]) {
         data[date] = {};
@@ -22,61 +29,55 @@ export function datetimeGPSSort(exif, data): void {
         data[date][country] = {};
     }
 
-    let city = cityWithZip;
-    zipcodesRegexes[country].forEach(regex => city = city.replace(regex, ''));
-    city = city.trim();
-
+    const city = removeZipcode(country, cityWithZip);
     if (!data[date][country][city]) {
         const duplicateCity = Object.keys(data[date][country]).find(city => city.toUpperCase() === city.toUpperCase());
         if (!duplicateCity) {
             data[date][country][city] = [];
-            data[date][country][city].push(exif);
+            data[date][country][city].push(metadata);
         } else {
-            data[date][country][duplicateCity].push(exif);
+            data[date][country][duplicateCity].push(metadata);
         }
     } else {
-        data[date][country][city].push(exif);
+        data[date][country][city].push(metadata);
     }
 }
 
-export function datetimeSort(exif, data): void {
+export function sortDatetime(metadata: JPGMetadata, data: {}): void {
     logger.info({ message: 'Photo contains only datetime data', label: 'datetimeSort' });
 
-    const date = exif.file.datetime.split(' ')[0].replace(/\:/g, '-');
+    const date = metadata.file.datetime.split(' ')[0].replace(/\:/g, '-');
 
     if (!data[date]) {
         data[date] = [];
     }
 
-    data[date].push(exif);
+    data[date].push(metadata);
 }
 
-export function GPSSort(exif, data): void {
+export function sortGPS(metadata: JPGMetadata, data: {}): void {
     logger.info({ message: 'Photo contains only GPS data', label: 'GPSSort' });
 
-    const [country, cityWithZip] = exif.gps.address.split(', ').reverse();
+    const [country, cityWithZip] = metadata.gps.address.split(', ').reverse();
     if (!data[country]) {
         data[country] = {};
     }
 
-    let city = cityWithZip;
-    zipcodesRegexes[country].forEach(regex => city = city.replace(regex, ''));
-    city = city.trim();
-
+    const city = removeZipcode(country, cityWithZip);
     if (!data[country][city]) {
         const duplicateCity = Object.keys(data[country]).find(city => city.toUpperCase() === city.toUpperCase());
         if (!duplicateCity) {
             data[country][city] = [];
-            data[country][city].push(exif);
+            data[country][city].push(metadata);
         } else {
-            data[country][duplicateCity].push(exif);
+            data[country][duplicateCity].push(metadata);
         }
     } else {
-        data[country][city].push(exif);
+        data[country][city].push(metadata);
     }
 }
 
-function reorganizeFiles(data, parentFolder: string): void {
+function reorganizeFiles(data: any, parentFolder: string): void {
     if (Array.isArray(data)) {
         for (const { file } of data) {
             const pathParts = file.path.split('/');
@@ -93,7 +94,7 @@ function reorganizeFiles(data, parentFolder: string): void {
     }
 }
 
-export function sortFiles(data, path: string): void {
+export function sortFiles(data: {}, path: string): void {
     const absPath = `${env.galleryPath}/${path}`;
     logger.info({ message: `Sorting files in '${absPath}'`, label: 'sortFiles' });
     reorganizeFiles(data, absPath);

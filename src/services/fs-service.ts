@@ -1,8 +1,6 @@
 const fs = require('fs');
 
 
-export const getBase64DataFromFile = (filename: string) => readFile(filename).toString('binary');
-
 export function getFilenames(path: string): string[] {
     const dirents = fs.readdirSync(path, { withFileTypes: true });
 
@@ -23,15 +21,19 @@ export function isPathExists(path: string): boolean {
     return fs.existsSync(path);
 }
 
-export function writeFile(filename: string, content): void {
+export function writeFile(filename: string, content: any): void {
     fs.writeFileSync(filename, content);
 }
 
-export function readFile(path: string) {
+export function readFile(path: string): boolean | string | Buffer {
     return isPathExists(path) && fs.readFileSync(path);
 }
 
-export function createFolder(path: string, recursive: boolean = false) {
+export function getBase64DataFromFile(path: string): boolean | string {
+    return readFile(path).toString('binary');
+}
+
+export function createFolder(path: string, recursive: boolean = false): boolean {
     return isPathExists(path) || fs.mkdirSync(path, { recursive });
 }
 

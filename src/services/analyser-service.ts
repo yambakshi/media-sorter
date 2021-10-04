@@ -2,7 +2,7 @@ import { env } from '../../config';
 import { getFilenames } from './fs-service';
 import { getJPGMetadata, getVideoMetadata } from './metadata-service';
 import { cache } from './cache-service';
-import { datetimeGPSSort, datetimeSort, GPSSort } from './sort-service';
+import { sortDatetimeGPS, sortDatetime, sortGPS } from './sort-service';
 import { logger } from '../../config/logger';
 import FileType from 'file-type';
 
@@ -32,15 +32,15 @@ export async function analyseFiles(path: string) {
     return data;
 }
 
-async function analyseJPG(filePath: string, data): Promise<void> {
+async function analyseJPG(filePath: string, data: {}): Promise<void> {
     const metadata = await getJPGMetadata(filePath);
 
     if (metadata.file.datetime && metadata.gps) {
-        datetimeGPSSort(metadata, data);
+        sortDatetimeGPS(metadata, data);
     } else if (metadata.file.datetime) {
-        datetimeSort(metadata, data);
+        sortDatetime(metadata, data);
     } else if (metadata.gps) {
-        GPSSort(metadata, data);
+        sortGPS(metadata, data);
     } else {
         logger.info({ message: 'JPG file contains neither datetime nor GPS data', label: 'analyseJPG' });
         return;
@@ -49,7 +49,7 @@ async function analyseJPG(filePath: string, data): Promise<void> {
     logger.info({ message: 'Successfully analysed JPG file', label: 'analyseJPG' });
 }
 
-async function analyseVideo(filePath: string, data): Promise<void> {
+async function analyseVideo(filePath: string, data: {}): Promise<void> {
     const metadata = await getVideoMetadata(filePath);
 
     if (!metadata.file.datetime) {
