@@ -1,7 +1,6 @@
-import { env } from '../../config';
+import { env, logger } from '../../config';
 import { createFolder, renameFile } from './fs-service';
 import { JPGMetadata } from '../models';
-import { logger } from '../../config/logger';
 
 
 const zipcodesRegexes: { [key: string]: RegExp[] } = {

@@ -10,7 +10,7 @@ export const logger = createLogger({
     transports: [
         new transports.Console({ level: 'info' }),
         new transports.File({
-            filename: './log/media-utils.log',
+            filename: './log/media-sorter.log',
             level: 'info',
         }),
     ],

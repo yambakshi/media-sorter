@@ -1,9 +1,8 @@
-import { env } from '../../config';
+import { env, logger } from '../../config';
 import { getFilenames } from './fs-service';
 import { getJPGMetadata, getVideoMetadata } from './metadata-service';
 import { cache } from './cache-service';
 import { sortDatetimeGPS, sortDatetime, sortGPS } from './sort-service';
-import { logger } from '../../config/logger';
 import FileType from 'file-type';
 
 
@@ -14,11 +13,10 @@ const analysers: { [key: string]: Function } = {
 }
 
 export async function analyseFiles(path: string) {
-    const data = {},
-        absPath = `${env.galleryPath}/${path}`,
-        filenames = getFilenames(absPath);
-    logger.info({ message: `Analysing ${filenames.length} files...`, label: 'analyseFiles' });
+    const data = {}, absPath = `${env.galleryPath}/${path}`;        
+    logger.info({ message: `Analysing files in '${absPath}'...`, label: 'analyseFiles' });
 
+    const filenames = getFilenames(absPath);
     for (const filename of filenames) {
         logger.info({ message: `Analysing file '${filename}'...`, label: 'analyseFiles' });
         const filePath = `${absPath}/${filename}`;
