@@ -12,8 +12,8 @@ const analysers: { [key: string]: Function } = {
     'mov': analyseVideo,
 }
 
-export async function analyseFiles(path: string) {
-    const data = {}, absPath = `${env.galleryPath}/${path}`;        
+export async function analyseFiles(path: string): Promise<{}> {
+    const data = {}, absPath = `${env.galleryPath}/${path}`;
     logger.info({ message: `Analysing files in '${absPath}'...`, label: 'analyseFiles' });
 
     const filenames = getFilenames(absPath);
