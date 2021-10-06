@@ -1,19 +1,17 @@
 const fs = require('fs');
 
 
-export function getFilenames(path: string): string[] {
+export enum FilterType { IsFile, IsDirectory };
+
+export function getFilenames(path: string, filterType: FilterType = FilterType.IsFile): string[] {
     const dirents = fs.readdirSync(path, { withFileTypes: true });
+    const filterFunction: { [key in FilterType]: any } = {
+        [FilterType.IsFile]: dirent => dirent.isFile(),
+        [FilterType.IsDirectory]: dirent => dirent.isDirectory()
+    }
 
     return dirents
-        .filter(dirent => dirent.isFile())
-        .map(dirent => dirent.name);
-}
-
-function getFoldersNames(path: string): string[] {
-    const dirents = fs.readdirSync(path, { withFileTypes: true });
-
-    return dirents
-        .filter(dirent => dirent.isDirectory())
+        .filter(filterFunction[filterType])
         .map(dirent => dirent.name);
 }
 
@@ -50,8 +48,8 @@ export function renameFile(oldPath: string, newPath: string): void {
 }
 
 export function countFilesRecursively(path: string, counter: number = 0): number {
-    const files = getFilenames(path);
-    const folders = getFoldersNames(path);
+    const files = getFilenames(path), folders = getFilenames(path, FilterType.IsDirectory);
+
     if (folders.length !== 0) {
         counter += files.length;
         for (let i = 0, length = folders.length; i < length; i++) {
@@ -60,7 +58,7 @@ export function countFilesRecursively(path: string, counter: number = 0): number
 
         return counter;
     }
-    
+
     return counter + files.length;
 }
 

@@ -20,8 +20,7 @@ function countFiles() {
         createFolder('caches');
 
         for (const path of env.folders) {
-            // const result = countFilesRecursively(`${env.galleryPath}/${path}`);
-            const result = countFilesRecursively('D:/Yam Bakshi/Careers/Music/Marketing/PR/Photoshoots/2021-09-01 - Portugal & Spain Family Trip');
+            const result = countFilesRecursively(`${env.galleryPath}/${path}`);            
             logger.info({ message: `Path '${path}' contains ${result} files`, label: 'countFiles' });
         }
     } catch (error) {
