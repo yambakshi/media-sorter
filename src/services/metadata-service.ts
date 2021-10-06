@@ -37,7 +37,7 @@ function calcCoordinates(exif): number[] {
 }
 
 function getDeviceData(exif): DeviceData {
-    if (!!exif['0th'] && Object.keys(exif['0th']).length === 0) {
+    if (Object.keys(exif['0th']).length === 0) {
         return;
     }
 
@@ -61,7 +61,7 @@ function getFileData(exif, path): FileData {
 }
 
 async function getGPSData(exif): Promise<GPSData> {
-    if (!!exif['GPS'] && Object.keys(exif['GPS']).length === 0) {
+    if (Object.keys(exif['GPS']).length === 0) {
         return;
     }
 

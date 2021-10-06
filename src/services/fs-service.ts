@@ -9,6 +9,14 @@ export function getFilenames(path: string): string[] {
         .map(dirent => dirent.name);
 }
 
+function getFoldersNames(path: string): string[] {
+    const dirents = fs.readdirSync(path, { withFileTypes: true });
+
+    return dirents
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+}
+
 export function getFileSize(path: string): number {
     const stats = fs.statSync(path);
     const fileSizeInBytes = stats.size;
@@ -39,6 +47,21 @@ export function createFolder(path: string, recursive: boolean = false): boolean 
 
 export function renameFile(oldPath: string, newPath: string): void {
     fs.renameSync(oldPath, newPath);
+}
+
+export function countFilesRecursively(path: string, counter: number = 0): number {
+    const files = getFilenames(path);
+    const folders = getFoldersNames(path);
+    if (folders.length !== 0) {
+        counter += files.length;
+        for (let i = 0, length = folders.length; i < length; i++) {
+            counter = countFilesRecursively(`${path}/${folders[i]}`, counter);
+        }
+
+        return counter;
+    }
+    
+    return counter + files.length;
 }
 
 export async function getPkgJsonDir(): Promise<string> {

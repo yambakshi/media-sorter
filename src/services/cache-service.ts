@@ -2,7 +2,7 @@ import { writeFile, readFile, createFolder } from './fs-service';
 import { logger } from '../../config/logger';
 
 
-export function load(path: string) {
+export function load(path: string): {} {
     const cachePath = `caches/${path}/cache.json`;
 
     logger.info({ message: `Loading cache '${cachePath}'...`, label: 'load' });

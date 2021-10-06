@@ -16,6 +16,7 @@
                 "-r",
                 "dotenv/config"
             ],
+            "args": ["count"],
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/out/**/*.js"
