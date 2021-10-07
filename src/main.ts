@@ -1,6 +1,6 @@
 import { env, logger } from '../config';
 import { Arguments } from './enums';
-import { createFolder, load, analyseFiles, sortFiles, scanFiles, revertSortFiles } from './services';
+import { createFolder, load, analyseFiles, scanFiles, reorganize, revertReorganize } from './services';
 
 
 async function sort() {
@@ -9,7 +9,7 @@ async function sort() {
             const absPath = `${env.rootFolder}/${path}`;
             logger.info({ message: `Sorting files in '${absPath}'`, label: 'sort' });
             const data = load(path, Arguments.Sort) || await analyseFiles(path);
-            (data && Object.keys(data).length !== 0) && sortFiles(data, absPath);
+            (data && Object.keys(data).length !== 0) && reorganize(data, absPath);
         }
     } catch (error) {
         logger.error({ message: error, label: 'sort' });
@@ -22,7 +22,7 @@ async function revertSort() {
             const absPath = `${env.rootFolder}/${path}`;
             logger.info({ message: `Reverting sort in '${absPath}'`, label: 'revertSort' });
             const data = load(path, Arguments.Sort);
-            (data && Object.keys(data).length !== 0) && await revertSortFiles(data, absPath);
+            (data && Object.keys(data).length !== 0) && await revertReorganize(data, absPath);
         }
     } catch (error) {
         logger.error({ message: error, label: 'revertSort' });
@@ -44,10 +44,10 @@ function countFiles() {
 
 async function main() {
     const argsLength = process.argv.length;
-    const availableArgs = Object.values(Arguments);
+    const availableArgs = `available arguments: ${Object.values(Arguments).join(', ')}`;
 
     if (argsLength < 3) {
-        logger.info({ message: `No argument was provided. available arguments: ${availableArgs.join(', ')}`, label: 'main' });
+        logger.info({ message: `No argument was provided. ${availableArgs}`, label: 'main' });
         return;
     }
 
@@ -66,7 +66,7 @@ async function main() {
                 countFiles();
                 break;
             default:
-                logger.info({ message: `Invalid argument '${arg}'. available arguments: ${availableArgs.join(', ')}`, label: 'main' });
+                logger.info({ message: `Invalid argument '${arg}'. ${availableArgs}`, label: 'main' });
                 break;
         }
     }

@@ -14,36 +14,20 @@ function removeZipcode(country: string, cityWithZip: string): string {
     return city.trim();
 }
 
-function reorganizeFiles(data: any, parentFolder: string): void {
+function reorganizeFiles(data: any, parentFolder: string, revert: boolean = false): void {
     if (Array.isArray(data)) {
         for (const { file } of data) {
             const pathParts = file.path.split('/');
             const filename = pathParts[pathParts.length - 1];
             const newPath = `${parentFolder}/${filename}`;
-            renameFile(file.path, newPath);
+            revert ? renameFile(newPath, file.path) : renameFile(file.path, newPath);
         }
     } else {
         Object.keys(data).forEach(level => {
             const newFolder = `${parentFolder}/${level}`;
-            createFolder(newFolder);
-            reorganizeFiles(data[level], newFolder);
+            !revert && createFolder(newFolder);
+            reorganizeFiles(data[level], newFolder, revert);
         });
-    }
-}
-
-function revertReorganizeFiles(data, parentFolder) {
-    if (Array.isArray(data)) {
-        for (const { file } of data) {
-            const pathParts = file.path.split('/');
-            const filename = pathParts[pathParts.length - 1];
-            const newPath = `${parentFolder}/${filename}`;
-            renameFile(newPath, file.path);
-        }
-    } else {
-        Object.keys(data).forEach(level => {
-            const newFolder = `${parentFolder}/${level}`;
-            revertReorganizeFiles(data[level], newFolder);
-        })
     }
 }
 
@@ -109,24 +93,24 @@ export function sortGPS(metadata: JPGMetadata, data: {}): void {
     }
 }
 
-export function sortFiles(data: {}, path: string): void {
-    logger.info({ message: `Sorting files in '${path}'`, label: 'sortFiles' });
+export function reorganize(data: {}, path: string): void {
+    logger.info({ message: `Reorganizing files in '${path}'`, label: 'reorganize' });
     reorganizeFiles(data, path);
-    logger.info({ message: 'Successfully sorted files', label: 'sortFiles' });
+    logger.info({ message: 'Successfully reorganized files', label: 'reorganize' });
 }
 
-export async function revertSortFiles(data: {}, path: string): Promise<void> {
-    logger.info({ message: `Reverting sort in '${path}'`, label: 'revertSortFiles' });
+export async function revertReorganize(data: {}, path: string): Promise<void> {
+    logger.info({ message: `Reverting reorganization in '${path}'`, label: 'revertReorganize' });
 
-    revertReorganizeFiles(data, path);
+    reorganizeFiles(data, path, true);
 
     // Delete sort folders
     const parentFolders = Object.keys(data);
     for (const folder of parentFolders) {
         const folderPath = `${path}/${folder}`;
-        logger.info({ message: `Deleteing folder '${folderPath}'`, label: 'revertSortFiles' });
+        logger.info({ message: `Deleting folder '${folderPath}'`, label: 'revertReorganize' });
         await removeFolder(folderPath);
     }
 
-    logger.info({ message: 'Successfully reverted sort', label: 'revertSortFiles' });
+    logger.info({ message: 'Successfully reverted reorganization', label: 'revertReorganize' });
 }
