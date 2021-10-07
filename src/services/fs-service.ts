@@ -51,12 +51,9 @@ export function countFilesRecursively(path: string, counter: number = 0): number
     const files = getFilenames(path), folders = getFilenames(path, FilterType.IsDirectory);
 
     if (folders.length !== 0) {
-        counter += files.length;
-        for (let i = 0, length = folders.length; i < length; i++) {
-            counter = countFilesRecursively(`${path}/${folders[i]}`, counter);
+        for (const folder of folders) {
+            counter = countFilesRecursively(`${path}/${folder}`, counter);
         }
-
-        return counter;
     }
 
     return counter + files.length;
