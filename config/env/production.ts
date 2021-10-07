@@ -1,14 +1,14 @@
 export default {
     apiKey: process.env.API_KEY,
-    galleryPath: process.env.GALLERY_PATH,
+    rootFolder: process.env.ROOT_FOLDER,
     folders: [
-        'Trips/2021-09 - Portugal & Spain Family Trip/Aba/Photos',
-        'Trips/2021-09 - Portugal & Spain Family Trip/Aba/Videos',
-        'Trips/2021-09 - Portugal & Spain Family Trip/Eden/Photos',
-        'Trips/2021-09 - Portugal & Spain Family Trip/Eden/Videos',
-        'Trips/2021-09 - Portugal & Spain Family Trip/Ema/Photos',
-        'Trips/2021-09 - Portugal & Spain Family Trip/Ema/Videos',
-        'Trips/2021-09 - Portugal & Spain Family Trip/Yam/Photos',
-        'Trips/2021-09 - Portugal & Spain Family Trip/Yam/Videos'
+        'Media/Gallery/Trips/2021-09 - Portugal & Spain Family Trip/Aba/Photos',
+        'Media/Gallery/Trips/2021-09 - Portugal & Spain Family Trip/Aba/Videos',
+        'Media/Gallery/Trips/2021-09 - Portugal & Spain Family Trip/Eden/Photos',
+        'Media/Gallery/Trips/2021-09 - Portugal & Spain Family Trip/Eden/Videos',
+        'Media/Gallery/Trips/2021-09 - Portugal & Spain Family Trip/Ema/Photos',
+        'Media/Gallery/Trips/2021-09 - Portugal & Spain Family Trip/Ema/Videos',
+        'Media/Gallery/Trips/2021-09 - Portugal & Spain Family Trip/Yam/Photos',
+        'Media/Gallery/Trips/2021-09 - Portugal & Spain Family Trip/Yam/Videos'
     ],
 }

@@ -1,9 +1,10 @@
 import { writeFile, readFile, createFolder } from './fs-service';
 import { logger } from '../../config/logger';
+import { Arguments } from '../models';
 
 
-export function load(path: string): {} {
-    const cachePath = `caches/${path}/cache.json`;
+export function load(path: string, arg: Arguments): { files?: string[] } {
+    const cachePath = `caches/${path}/${arg}.json`;
 
     logger.info({ message: `Loading cache '${cachePath}'...`, label: 'load' });
     const cache = JSON.parse(readFile(cachePath) as string);
@@ -12,12 +13,12 @@ export function load(path: string): {} {
     return cache;
 }
 
-export function cache(path: string, data: {}): void {
+export function cache(path: string, data: {}, arg: Arguments): void {
     const cacheFolder = `caches/${path}`;
     createFolder(cacheFolder, true);
 
-    const cachePath = `${cacheFolder}/cache.json`;
-    logger.info({ message: `Caching analysis results in '${cachePath}'...`, label: 'cache' });
+    const cachePath = `${cacheFolder}/${arg}.json`;
+    logger.info({ message: `Caching results in '${cachePath}'...`, label: 'cache' });
 
     let message = 'Successfully cached';
     if (data && Object.keys(data).length !== 0) {

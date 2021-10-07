@@ -1,3 +1,7 @@
+import { env, logger } from "../../config";
+import { Arguments } from "../enums";
+import { cache } from "./cache-service";
+
 const fs = require('fs');
 
 
@@ -13,6 +17,18 @@ export function getFilenames(path: string, filterType: FilterType = FilterType.I
     return dirents
         .filter(filterFunction[filterType])
         .map(dirent => dirent.name);
+}
+
+export function getFilenamesRecursively(path: string, filesArray: string[] = []): string[] {
+    const files = getFilenames(path), folders = getFilenames(path, FilterType.IsDirectory);
+
+    if (folders.length !== 0) {
+        for (const folder of folders) {
+            filesArray = getFilenamesRecursively(`${path}/${folder}`, filesArray);
+        }
+    }
+
+    return filesArray.concat(files);
 }
 
 export function getFileSize(path: string): number {
@@ -47,16 +63,16 @@ export function renameFile(oldPath: string, newPath: string): void {
     fs.renameSync(oldPath, newPath);
 }
 
-export function countFilesRecursively(path: string, counter: number = 0): number {
-    const files = getFilenames(path), folders = getFilenames(path, FilterType.IsDirectory);
+export function scanPath(path: string): { files: string[] } {
+    const absPath = `${env.rootFolder}/${path}`;
 
-    if (folders.length !== 0) {
-        for (const folder of folders) {
-            counter = countFilesRecursively(`${path}/${folder}`, counter);
-        }
-    }
+    logger.info({ message: `Scanning path '${absPath}'...`, label: 'scanPath' });
+    const data = { files: getFilenamesRecursively(absPath) };
+    logger.info({ message: 'Successfully scanned', label: 'scanPath' });
 
-    return counter + files.length;
+    cache(path, data, Arguments.CountFiles);
+
+    return data;
 }
 
 export async function getPkgJsonDir(): Promise<string> {

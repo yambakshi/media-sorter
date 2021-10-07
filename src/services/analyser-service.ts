@@ -4,6 +4,7 @@ import { getJPGMetadata, getVideoMetadata } from './metadata-service';
 import { cache } from './cache-service';
 import { sortDatetimeGPS, sortDatetime, sortGPS } from './sort-service';
 import FileType from 'file-type';
+import { Arguments } from '../enums';
 
 
 const analysers: { [key: string]: Function } = {
@@ -13,10 +14,10 @@ const analysers: { [key: string]: Function } = {
 }
 
 export async function analyseFiles(path: string): Promise<{}> {
-    const data = {}, absPath = `${env.galleryPath}/${path}`;
-    logger.info({ message: `Analysing files in '${absPath}'...`, label: 'analyseFiles' });
+    const absPath = `${env.rootFolder}/${path}`;
 
-    const filenames = getFilenames(absPath);
+    logger.info({ message: `Analysing files in '${absPath}'...`, label: 'analyseFiles' });
+    const data = {}, filenames = getFilenames(absPath);
     for (const filename of filenames) {
         logger.info({ message: `Analysing file '${filename}'...`, label: 'analyseFiles' });
         const filePath = `${absPath}/${filename}`;
@@ -24,8 +25,8 @@ export async function analyseFiles(path: string): Promise<{}> {
         analysers[fileType] && await analysers[fileType](filePath, data);
     }
 
-    logger.info({ message: `Analysed ${filenames.length} files`, label: 'analyseFiles' });
-    cache(path, data);
+    logger.info({ message: `Successfully analysed ${filenames.length} files`, label: 'analyseFiles' });
+    cache(path, data, Arguments.SortMediaFiles);
 
     return data;
 }

@@ -94,8 +94,7 @@ function reorganizeFiles(data: any, parentFolder: string): void {
 }
 
 export function sortFiles(data: {}, path: string): void {
-    const absPath = `${env.galleryPath}/${path}`;
-    logger.info({ message: `Sorting files in '${absPath}'`, label: 'sortFiles' });
-    reorganizeFiles(data, absPath);
+    logger.info({ message: `Sorting files in '${path}'`, label: 'sortFiles' });
+    reorganizeFiles(data, path);
     logger.info({ message: 'Successfully sorted files', label: 'sortFiles' });
 }
