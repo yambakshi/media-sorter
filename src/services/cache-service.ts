@@ -1,6 +1,6 @@
 import { writeFile, readFile, createFolder } from './fs-service';
 import { logger } from '../../config/logger';
-import { Arguments } from '../models';
+import { Arguments } from '../enums';
 
 
 export function load(path: string, arg: Arguments): { files?: string[] } {
@@ -13,7 +13,7 @@ export function load(path: string, arg: Arguments): { files?: string[] } {
     return cache;
 }
 
-export function cache(path: string, data: {}, arg: Arguments): void {
+export function cache(path: string, arg: Arguments, data: {}): void {
     const cacheFolder = `caches/${path}`;
     createFolder(cacheFolder, true);
 

@@ -16,7 +16,7 @@
                 "-r",
                 "dotenv/config"
             ],
-            "args": ["sort-media-files"],
+            "args": ["count-files"],
             "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/out/**/*.js"

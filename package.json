@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.2.2",
+    "del": "^6.0.0",
     "ffprobe": "^1.1.2",
     "ffprobe-static": "^3.0.0",
     "file-type": "^16.5.3",

@@ -26,7 +26,7 @@ export async function analyseFiles(path: string): Promise<{}> {
     }
 
     logger.info({ message: `Successfully analysed ${filenames.length} files`, label: 'analyseFiles' });
-    cache(path, data, Arguments.SortMediaFiles);
+    cache(path, Arguments.Sort, data);
 
     return data;
 }
