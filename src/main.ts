@@ -1,35 +1,22 @@
 import { env, logger } from '../config';
 import { Arguments } from './enums';
-import { createFolder, load, analyseFiles, scanFiles, reorganize, revertReorganize } from './services';
+import { createFolder, load, analyseFiles, scanFiles, reorganize } from './services';
 
 
-async function sort() {
+async function sort(revert: boolean = false) {
     try {
         for (const path of env.folders) {
             const absPath = `${env.rootFolder}/${path}`;
             logger.info({ message: `Sorting files in '${absPath}'`, label: 'sort' });
-            const data = load(path, Arguments.Sort) || await analyseFiles(path);
-            (data && Object.keys(data).length !== 0) && reorganize(data, absPath);
+            const data = load(path, Arguments.Sort) || (!revert && await analyseFiles(path));
+            (data && Object.keys(data).length !== 0) && await reorganize(data, absPath, revert);
         }
     } catch (error) {
         logger.error({ message: error, label: 'sort' });
     }
 }
 
-async function revertSort() {
-    try {
-        for (const path of env.folders) {
-            const absPath = `${env.rootFolder}/${path}`;
-            logger.info({ message: `Reverting sort in '${absPath}'`, label: 'revertSort' });
-            const data = load(path, Arguments.Sort);
-            (data && Object.keys(data).length !== 0) && await revertReorganize(data, absPath);
-        }
-    } catch (error) {
-        logger.error({ message: error, label: 'revertSort' });
-    }
-}
-
-function countFiles() {
+function countFiles(): void {
     try {
         for (const path of env.folders) {
             const absPath = `${env.rootFolder}/${path}`;
@@ -60,7 +47,7 @@ async function main() {
                 await sort();
                 break;
             case Arguments.RevertSort:
-                await revertSort();
+                await sort(true);
                 break;
             case Arguments.CountFiles:
                 countFiles();

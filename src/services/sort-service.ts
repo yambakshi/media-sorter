@@ -93,23 +93,18 @@ export function sortGPS(metadata: JPGMetadata, data: {}): void {
     }
 }
 
-export function reorganize(data: {}, path: string): void {
+export async function reorganize(data: {}, path: string, revert: boolean = false): Promise<void> {
     logger.info({ message: `Reorganizing files in '${path}'`, label: 'reorganize' });
-    reorganizeFiles(data, path);
-    logger.info({ message: 'Successfully reorganized files', label: 'reorganize' });
-}
+    reorganizeFiles(data, path, revert);
 
-export async function revertReorganize(data: {}, path: string): Promise<void> {
-    logger.info({ message: `Reverting reorganization in '${path}'`, label: 'revertReorganize' });
-    reorganizeFiles(data, path, true);
-
-    // Delete sort folders
-    const parentFolders = Object.keys(data);
-    for (const folder of parentFolders) {
-        const folderPath = `${path}/${folder}`;
-        logger.info({ message: `Deleting folder '${folderPath}'`, label: 'revertReorganize' });
-        await removeFolder(folderPath);
+    if (revert) {
+        const parentFolders = Object.keys(data);
+        for (const folder of parentFolders) {
+            const folderPath = `${path}/${folder}`;
+            logger.info({ message: `Deleting folder '${folderPath}'`, label: 'revertReorganize' });
+            await removeFolder(folderPath);
+        }
     }
 
-    logger.info({ message: 'Successfully reverted reorganization', label: 'revertReorganize' });
+    logger.info({ message: 'Successfully reorganized files', label: 'reorganize' });
 }
