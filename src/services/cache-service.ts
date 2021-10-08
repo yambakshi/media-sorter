@@ -14,18 +14,17 @@ export function load(path: string, arg: Arguments): { files?: string[] } {
 }
 
 export function cache(path: string, arg: Arguments, data: {}): void {
+    if (!data || Object.keys(data).length == 0) {
+        logger.info({ message: 'Nothing to cache', label: 'cache' });
+        return;
+    }
+
     const cacheFolder = `caches/${path}`;
     createFolder(cacheFolder, true);
 
     const cachePath = `${cacheFolder}/${arg}.json`;
     logger.info({ message: `Caching results in '${cachePath}'...`, label: 'cache' });
 
-    let message = 'Successfully cached';
-    if (data && Object.keys(data).length !== 0) {
-        writeFile(cachePath, JSON.stringify(data));
-    } else {
-        message = 'Nothing to cache';
-    }
-
-    logger.info({ message, label: 'cache' });
+    writeFile(cachePath, JSON.stringify(data));
+    logger.info({ message: 'Successfully cached', label: 'cache' });
 }

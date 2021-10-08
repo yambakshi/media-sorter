@@ -101,7 +101,6 @@ export function reorganize(data: {}, path: string): void {
 
 export async function revertReorganize(data: {}, path: string): Promise<void> {
     logger.info({ message: `Reverting reorganization in '${path}'`, label: 'revertReorganize' });
-
     reorganizeFiles(data, path, true);
 
     // Delete sort folders

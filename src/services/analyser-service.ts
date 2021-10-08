@@ -18,6 +18,12 @@ export async function analyseFiles(path: string): Promise<{}> {
 
     logger.info({ message: `Analysing files in '${absPath}'...`, label: 'analyseFiles' });
     const data = {}, filenames = getFilenames(absPath);
+
+    if (filenames.length === 0) {
+        logger.info({ message: `No files were found in '${absPath}'...`, label: 'analyseFiles' });
+        return;
+    }
+
     for (const filename of filenames) {
         logger.info({ message: `Analysing file '${filename}'...`, label: 'analyseFiles' });
         const filePath = `${absPath}/${filename}`;
