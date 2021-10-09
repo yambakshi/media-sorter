@@ -3,7 +3,7 @@ import { Arguments } from './enums';
 import { createFolder, load, analyseFiles, scanFiles, reorganize } from './services';
 
 
-async function sort(revert: boolean = false) {
+async function sort(revert: boolean = false): Promise<void> {
     try {
         for (const path of env.folders) {
             const absPath = `${env.rootFolder}/${path}`;
